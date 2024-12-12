@@ -3,6 +3,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
 import time
 import os
@@ -14,19 +16,39 @@ if not os.path.exists(SCRAPED_DIR):
 
 class ApartmentScraper:
     def __init__(self):
-        # Initialize Chrome options
+        # Initialize Chrome options for Replit environment
         options = webdriver.ChromeOptions()
-        options.add_argument('--headless')  # Run in headless mode
-        options.add_argument('--disable-gpu')
+        options.add_argument('--headless')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
-        # Add these options to make the browser look more like a real user
+        options.add_argument('--disable-gpu')
         options.add_argument('--window-size=1920,1080')
-        options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
+        options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
         
-        # Initialize the driver
-        self.driver = webdriver.Chrome(options=options)
+        # Additional Replit-specific options
+        options.binary_location = '/usr/bin/google-chrome'
         
+        try:
+            # Try to initialize the driver with Replit configuration
+            service = Service()
+            self.driver = webdriver.Chrome(
+                service=service,
+                options=options
+            )
+        except Exception as e:
+            print(f"Error initializing Chrome driver: {e}")
+            print("Attempting alternative setup...")
+            try:
+                # Alternative setup using webdriver_manager
+                service = Service(ChromeDriverManager().install())
+                self.driver = webdriver.Chrome(
+                    service=service,
+                    options=options
+                )
+            except Exception as e:
+                print(f"Failed to initialize Chrome driver: {e}")
+                raise
+    
     def scrape_listing(self, url):
         try:
             self.driver.get(url)

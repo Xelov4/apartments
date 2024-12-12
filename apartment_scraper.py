@@ -7,6 +7,11 @@ import pandas as pd
 import time
 import os
 
+# Create scraped directory if it doesn't exist
+SCRAPED_DIR = "scraped"
+if not os.path.exists(SCRAPED_DIR):
+    os.makedirs(SCRAPED_DIR)
+
 class ApartmentScraper:
     def __init__(self):
         # Initialize Chrome options
@@ -90,13 +95,13 @@ class ApartmentScraper:
             df['availability'] = df['availability'].str.replace('availibility\n', '', case=False).str.strip()
         
         # Handle duplicate filenames
-        base_name = os.path.splitext(output_file)[0]
+        base_name = os.path.splitext(os.path.basename(output_file))[0]
         extension = os.path.splitext(output_file)[1]
         counter = 1
-        final_output_file = output_file
+        final_output_file = os.path.join(SCRAPED_DIR, output_file)
         
         while os.path.exists(final_output_file):
-            final_output_file = f"{base_name}_{counter}{extension}"
+            final_output_file = os.path.join(SCRAPED_DIR, f"{base_name}_{counter}{extension}")
             counter += 1
             
         df.to_excel(final_output_file, index=False)

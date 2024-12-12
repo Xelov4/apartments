@@ -1,0 +1,19 @@
+# Virtual Environment
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Excel files in scraped folder
+scraped/*.xlsx
+
+# IDE
+.vscode/
+.idea/
+
+# OS specific
+.DS_Store
+Thumbs.db 

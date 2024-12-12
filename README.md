@@ -6,23 +6,71 @@ A Python web scraper for apartments.com that extracts apartment listing informat
 
 - Python 3.8+
 - Chrome browser installed
-- Virtual environment (recommended)
+- Virtual environment (mandatory)
 
-## Setup
+## Virtual Environment Setup (Mandatory)
 
-1. Clone the repository
-2. Create and activate a virtual environment:
+### 1. Create Virtual Environment
 ```bash
+# Windows
 python -m venv .venv
-# On Windows:
-.venv\Scripts\activate
-# On Unix/MacOS:
+
+# Linux/MacOS
+python3 -m venv .venv
+```
+
+### 2. Activate Virtual Environment
+```bash
+# Windows (PowerShell)
+.\.venv\Scripts\Activate.ps1
+
+# Windows (Command Prompt)
+.\.venv\Scripts\activate.bat
+
+# Linux/MacOS
 source .venv/bin/activate
 ```
-3. Install dependencies:
+
+### 3. Install Required Dependencies
 ```bash
 pip install -r requirements.txt
 ```
+
+### Virtual Environment Structure
+The `.venv` directory structure:
+```
+.venv/
+├── Include/
+├── Lib/
+│   └── site-packages/  # Where all installed packages are stored
+├── Scripts/ (Windows) or bin/ (Linux/MacOS)
+│   ├── activate        # Activation scripts
+│   ├── activate.bat    # Windows CMD activation
+│   ├── Activate.ps1    # PowerShell activation
+│   ├── python.exe      # Python interpreter
+│   └── pip.exe         # Package installer
+└── pyvenv.cfg          # Virtual environment configuration
+```
+
+### Required Packages
+The following packages will be installed from requirements.txt:
+- selenium==4.15.2 (Web automation)
+- pandas==2.1.3 (Data manipulation)
+- openpyxl==3.1.2 (Excel file handling)
+- webdriver-manager==4.0.1 (Browser driver management)
+- requests==2.31.0 (HTTP requests)
+- urllib3==2.1.0 (HTTP client)
+- chromedriver-autoinstaller==0.6.3 (Chrome driver setup)
+
+### Important Notes
+1. **NEVER** commit the `.venv` directory to version control (it's already in `.gitignore`)
+2. Always activate the virtual environment before running the project
+3. If you install new packages, update `requirements.txt` with:
+   ```bash
+   pip freeze > requirements.txt
+   ```
+4. Make sure you have Python installed on your system (Python 3.8+ required)
+5. The virtual environment isolates project dependencies from your global Python installation
 
 ## Usage
 

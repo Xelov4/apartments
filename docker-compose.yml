@@ -50,9 +50,6 @@ services:
       - TZ=Europe/Paris
     volumes:
       - uploads_data:/app/public/uploads
-      - ./nextjs/.next/standalone:/app
-      - ./nextjs/.next/static:/app/.next/static
-      - ./nextjs/public:/app/public
     depends_on:
       mariadb:
         condition: service_healthy

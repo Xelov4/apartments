@@ -23,5 +23,5 @@ RUN npm run build
 # Exposition du port standard Next.js
 EXPOSE 3000
 
-# Commande de démarrage pour standalone
-CMD ["node", "server.js"] 
+# Commande de démarrage pour le serveur standalone
+CMD ["node", ".next/standalone/server.js"] 

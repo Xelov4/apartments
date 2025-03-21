@@ -1,0 +1,57 @@
+# Fichiers d'environnement
+.env
+.env.*
+!.env.example
+
+# Dépendances
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Fichiers de build
+.next/
+out/
+build/
+dist/
+
+# Fichiers de cache
+.cache/
+.npm/
+.yarn/
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers de logs
+*.log
+logs/
+log/
+
+# Fichiers de base de données
+*.sqlite
+*.db
+
+# Fichiers de certificats SSL
+*.pem
+*.key
+*.crt
+*.csr
+
+# Fichiers Docker
+.docker/
+
+# Fichiers d'IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+*.bak
+
+# Fichiers temporaires
+tmp/
+temp/
+.tmp/
+.temp/ 

@@ -1,0 +1,149 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id           Int          @id @default(autoincrement())
+  name         String       @db.VarChar(100)
+  slug         String       @unique @db.VarChar(100)
+  description  String?      @db.Text
+  parentId     Int?         @map("parent_id")
+  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt    DateTime     @updatedAt @map("updated_at") @db.Timestamp(0)
+  parent       Category?    @relation("ParentChild", fields: [parentId], references: [id], onDelete: SetNull)
+  children     Category[]   @relation("ParentChild")
+  tools        Tool[]
+  submissions  Submission[]
+
+  @@index([parentId], name: "idx_category_parent")
+  @@index([slug], name: "idx_category_slug")
+  @@map("categories")
+}
+
+model Tool {
+  id             Int          @id @default(autoincrement())
+  name           String       @db.VarChar(100)
+  slug           String       @unique @db.VarChar(100)
+  website        String       @db.VarChar(255)
+  description    String       @db.Text
+  shortDesc      String       @map("short_desc") @db.VarChar(255)
+  logoUrl        String?      @map("logo_url") @db.VarChar(255)
+  categoryId     Int          @map("category_id")
+  pricingType    String       @map("pricing_type") @db.VarChar(50)
+  pricingDetails String?      @map("pricing_details") @db.Text
+  features       Json?
+  isFeatured     Boolean      @default(false) @map("is_featured")
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamp(0)
+  category       Category     @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  tags           ToolTag[]
+  reviews        Review[]
+
+  @@index([categoryId], name: "idx_tool_category")
+  @@index([isFeatured], name: "idx_tool_featured")
+  @@index([slug], name: "idx_tool_slug")
+  @@map("tools")
+}
+
+model Tag {
+  id    Int       @id @default(autoincrement())
+  name  String    @unique @db.VarChar(50)
+  slug  String    @unique @db.VarChar(50)
+  tools ToolTag[]
+
+  @@index([slug], name: "idx_tag_slug")
+  @@map("tags")
+}
+
+model ToolTag {
+  toolId Int  @map("tool_id")
+  tagId  Int  @map("tag_id")
+  tool   Tool @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([toolId, tagId])
+  @@index([toolId], name: "idx_tooltag_tool")
+  @@index([tagId], name: "idx_tooltag_tag")
+  @@map("tools_tags")
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  toolId     Int      @map("tool_id")
+  userName   String   @map("user_name") @db.VarChar(100)
+  rating     Int      @db.TinyInt
+  comment    String   @db.Text
+  isApproved Boolean  @default(false) @map("is_approved")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  tool       Tool     @relation(fields: [toolId], references: [id], onDelete: Cascade)
+
+  @@index([toolId], name: "idx_review_tool")
+  @@index([isApproved], name: "idx_review_approved")
+  @@map("reviews")
+}
+
+model Submission {
+  id             Int      @id @default(autoincrement())
+  name           String   @db.VarChar(100)
+  website        String   @db.VarChar(255)
+  description    String   @db.Text
+  shortDesc      String   @map("short_desc") @db.VarChar(255)
+  categoryId     Int      @map("category_id")
+  pricingType    String   @map("pricing_type") @db.VarChar(50)
+  pricingDetails String?  @map("pricing_details") @db.Text
+  features       Json?
+  submitterName  String   @map("submitter_name") @db.VarChar(100)
+  submitterEmail String   @map("submitter_email") @db.VarChar(100)
+  status         String   @default("pending") @db.VarChar(20)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  category       Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@index([status], name: "idx_submission_status")
+  @@index([categoryId], name: "idx_submission_category")
+  @@map("submissions")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique @db.VarChar(100)
+  password  String   @db.VarChar(255)
+  name      String   @db.VarChar(100)
+  role      String   @default("admin") @db.VarChar(20)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  @@index([email], name: "idx_user_email")
+  @@index([role], name: "idx_user_role")
+  @@map("users")
+}
+
+model Contact {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(100)
+  email     String   @db.VarChar(100)
+  subject   String   @db.VarChar(100)
+  message   String   @db.Text
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+
+  @@index([isRead], name: "idx_contact_read")
+  @@map("contacts")
+}
+
+model Analytics {
+  id        Int       @id @default(autoincrement())
+  pagePath  String    @map("page_path") @db.VarChar(255)
+  visitorIp String?   @map("visitor_ip") @db.VarChar(45)
+  userAgent String?   @map("user_agent") @db.Text
+  referer   String?   @db.VarChar(255)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(0)
+
+  @@index([pagePath], name: "idx_analytics_path")
+  @@index([createdAt], name: "idx_analytics_date")
+  @@map("analytics")
+} 

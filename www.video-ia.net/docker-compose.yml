@@ -23,7 +23,7 @@ services:
     ports:
       - "127.0.0.1:3306:3306"  # Exposition locale uniquement pour debug
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "--user=root", "--password=${DB_ROOT_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -50,6 +50,9 @@ services:
       - TZ=Europe/Paris
     volumes:
       - uploads_data:/app/public/uploads
+      - ./nextjs/.next/standalone:/app
+      - ./nextjs/.next/static:/app/.next/static
+      - ./nextjs/public:/app/public
     depends_on:
       mariadb:
         condition: service_healthy
@@ -78,6 +81,7 @@ services:
       - certbot_www:/var/www/certbot
       - nginx_cache:/var/cache/nginx
       - uploads_data:/var/www/uploads
+      - ./certbot/www:/var/www/html
     depends_on:
       - nextjs
     networks:
@@ -97,6 +101,7 @@ services:
     volumes:
       - certbot_data:/etc/letsencrypt
       - certbot_www:/var/www/certbot
+      - ./certbot/www:/var/www/html
     environment:
       - DOMAIN=${DOMAIN}
       - ADDITIONAL_DOMAINS=${ADDITIONAL_DOMAINS}

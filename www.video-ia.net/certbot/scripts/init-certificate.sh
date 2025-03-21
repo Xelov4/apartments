@@ -42,8 +42,11 @@ fi
 
 echo "Demande de certificat pour $DOMAIN $DOMAIN_ARGS"
 
+# Création du répertoire webroot s'il n'existe pas
+mkdir -p /var/www/html/.well-known/acme-challenge
+
 # Demande de certificat
-certbot certonly --webroot -w /var/www/certbot \
+certbot certonly --webroot -w /var/www/html \
   $DOMAIN_ARGS \
   --email $EMAIL \
   --rsa-key-size 4096 \
